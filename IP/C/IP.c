@@ -38,10 +38,10 @@ int main(){
 	
 	server_address.sin_port = htons(8080);
 	
-	server_address.sin_addr.s_addr = INADOR_ANY;
+	server_address.sin_addr.s_addr = INADDR_ANY;
 	
 	
-	if(bind(server_socket, (struct socketaddr *)&server_address, sizeof(server_address))== -1){
+	if(bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address))== -1){
 		
 		perror("BIND ERROR");
 		
@@ -69,7 +69,7 @@ int main(){
 		
 		client_address_len = sizeof(client_address);
 		
-		client_socket = accept(sever_socket, (struct sockaddr *) &client_address, &client_address_len);
+		client_socket = accept(server_socket, (struct sockaddr *) &client_address, &client_address_len);
 		
 		if(client_socket == -1){
 			
@@ -78,15 +78,26 @@ int main(){
 			continue;
 				
 		}
+        ssize_t bytes_received = recv(client_socket, buffer,sizeof(buffer),0);
+        if(bytes_received == -1){
+
+            perror("data error");
+
+            close(client_socket);
+
+            continue;
+
+        }
 		
-		printf("Data %.s\n", (int)bytes_received, buffer);
+		//printf("Data %.d\n", (int)bytes_received, buffer);
 		
-		close(client-socket);
+		close(client_socket);
 	
 	}
 	
 	close(server_socket);
 	
 	return 0;
-	
+	 
 }
+
